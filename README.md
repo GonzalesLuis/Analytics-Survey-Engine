@@ -1,162 +1,133 @@
-## AnalyticsEngine (Thesis Project)
+# Analytics Survey Engine
 
-A Laravel web app for running a **tutoring session evaluation workflow** and generating **analytics metrics + rubric-based interpretations** from multiple surveys.
+## Core Features
 
-The app guides a user through a session lifecycle:
-- Start a tutoring session
-- Answer **pre-session** (baseline) survey
-- End the session
-- Answer **post-session** surveys (reflection, satisfaction, compatibility, tutor performance)
-- Answer **tutee evaluation**
-- View the **computed metrics** and **dimension breakdowns** on the results screen
+- End-to-end tutoring session workflow (start session to results page)
+- Pre-session, post-session, and tutee evaluation surveys
+- Data-driven survey questions from seeded database records
+- Automatic dimension score computation and normalization
+- Session-level metric computation
+- Rubric-based interpretation and recommended action generation
+- Results page that summarizes computed outcomes
 
-### What gets computed
+## Session Lifecycle and Survey/Analytics Flow
 
-The system stores:
-- **Raw responses** (per-question scores)
-- **Derived dimension scores** (per survey dimension: average + normalized 0..1)
-- **Derived metrics** (session-level metrics like SRLG/PLG/TMES and their components)
-- **Rubric interpretations** for each metric result (status level + interpretation + recommended action)
+1. User opens home page (`/`)
+2. User starts a tutoring session
+3. User answers pre-session survey (`/pre_session`)
+4. User ends the tutoring session
+5. User answers post-session survey (`/post_session`)
+6. User answers tutee evaluation survey (`/tutee_evaluation`)
+7. System computes/updates derived scores and rubric mappings (dimension scores, metric scores, rubric interpretation)
+8. User views final results (`/survey_results`)
 
-### Tech stack
+## Project Structure
 
-- **Backend**: Laravel (PHP)
-- **Frontend tooling**: Node.js + Vite (used via `composer run dev`)
-- **Database**: PostgreSQL (recommended; configured via `.env`)
+- `routes/web.php`  
+  Route definitions for session workflow and survey/result pages.
 
-## Project structure (important files)
+- `app/Http/Controllers/`  
+  Controllers for home/session controls, survey rendering/submission, and results display.
 
-- **Routes**
-  - `routes/web.php`: entry points for the workflow pages
-- **Controllers**
-  - `app/Http/Controllers/HomeController.php`: start/end session + home page state
-  - `app/Http/Controllers/*SurveyController.php`: render/submit surveys
-  - `app/Http/Controllers/MetricResultsController.php`: results page
-- **Domain logic**
-  - `app/Services/SurveyService.php`: loads questions, computes scores/metrics, persists results, matches rubrics
-- **Database**
-  - `database/migrations/*`: schema for surveys, responses, scores, metrics, and rubrics
-  - `database/seeders/SurveySeeder.php`: seeds surveys/dimensions/questions
-  - `database/seeders/MetricRubricSeeder.php`: seeds metrics + rubric ranges
-  - `database/seeders/DatabaseSeeder.php`: runs the seeders and creates a default test user
+- `app/Services/SurveyService.php`  
+  Core domain logic for loading survey data, scoring, metric computation, persistence, and rubric matching.
 
-## Install requirements (manual)
+- `database/migrations/`  
+  Database schema for surveys, dimensions, questions, sessions, responses, scores, metrics, and rubrics.
 
-Install these first:
-- **PHP** (compatible with the Laravel version in `composer.json`)
-- **Composer**
-- **Node.js** (npm)
-- **PostgreSQL**
+- `database/seeders/SurveySeeder.php`  
+  Seeds surveys, dimensions, and questions.
 
-Optional (Windows):
-- Use **WSL** for a more Linux-like dev environment (recommended if you run into tooling issues on Windows).
+- `database/seeders/MetricRubricSeeder.php`  
+  Seeds metric definitions and rubric threshold ranges.
 
-## Alternatively (WSL + Nix dev shell)
+- `database/seeders/DatabaseSeeder.php`  
+  Main seeder entry point (includes baseline bootstrap data).
 
-If you want a reproducible environment, you can use WSL and Nix.
+## Requirements
 
-1) Install Nix in WSL:
+- PHP 8.3+
+- Laravel
+- PostgreSQL
+- composer
 
+## Initial Run and Setup
+
+##Dependencies
 ```bash
-sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-```
-
-2) Enable flakes:
-
-```bash
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
-```
-
-3) Enter the dev shell:
-
-```bash
-nix develop
-```
-
-## Clone and install dependencies
-
-```bash
-git clone <your-repo-url>
-cd AnalyticsEngine
-
-npm install
 composer install
 ```
 
-## Initial setup (first run)
-
-1) Create your environment file:
-
+##Environment setup
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-2) Configure PostgreSQL connection in `.env`.
-
-Example:
-
-```env
+##Configure database
+```bash
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5433
-DB_DATABASE=peer_matching
-DB_USERNAME=dev
+DB_DATABASE=analytics_engine
+DB_USERNAME=postgres
 DB_PASSWORD=123
 ```
 
-3) Create the database in Postgres (if it doesn’t exist yet).
+## Migration
 
-4) Run migrations:
+Run migrations:
 
 ```bash
 php artisan migrate
 ```
 
-## Seeding the database (required)
+Fresh reset:
 
-Seeding is required because survey pages are **data-driven** (questions come from the database).
+```bash
+php artisan migrate:fresh
+```
 
-Run:
+## Seeding (Required)
+
+- The system relies on seeded survey and rubric data.
 
 ```bash
 php artisan db:seed
 ```
 
-This will:
-- Create a default test user (see `database/seeders/DatabaseSeeder.php`)
-- Seed all surveys/dimensions/questions (`SurveySeeder`)
-- Seed metrics and rubric ranges (`MetricRubricSeeder`)
-
-If you ever want to reset everything:
+Full reset + seeded:
 
 ```bash
 php artisan migrate:fresh --seed
 ```
 
-## Run the project (development)
-
-Start the dev server (Laravel + Vite):
+## Run Application
 
 ```bash
-composer run dev
+php artisan serve
 ```
 
-Then open:
-- `http://127.0.0.1:8000`
+## Notes
 
-## Notes for VS Code (especially WSL)
+- Survey pages depend on seeded questions and dimensions.
+- Missing seed data can cause empty forms or incomplete analytics.
+- Use `migrate:fresh --seed` whenever schema/seed changes are made during development.
 
-- If you're using WSL, install and run **VS Code through WSL** so PHP/Laravel tooling (LSP, formatters) detects the right executables.
-- If you're not using WSL, make sure VS Code is pointing to the correct `php` executable in your system PATH.
 
-## Workflow summary (how to use the app)
+## Data Overview
 
-1) Go to the home page (`/`)
-2) Click **Start session**
-3) Complete **Pre-session** survey
-4) Click **End session**
-5) Complete **Post-session** surveys
-6) Complete **Tutee evaluation**
-7) View **Metric results** (`/metric_results`)
+- Raw survey responses (per user/session/question)
+- Response answer values
+- Tutoring session records
+- Dimension score records
+- Metric result records
+- Rubric result records
+
+### Computed Data
+
+- Dimension-level averages and normalized values
+- Session-level metrics (including component metrics)
+- Rubric classification per metric (level/status)
+- Interpretation text and recommended action based on rubric range
+
