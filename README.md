@@ -53,18 +53,18 @@
 
 ## Initial Run and Setup
 
-##Dependencies
+Dependencies
 ```bash
 composer install
 ```
 
-##Environment setup
+Environment setup
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-##Configure database
+Configure database
 ```bash
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
