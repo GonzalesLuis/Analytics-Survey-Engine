@@ -47,25 +47,39 @@
 ## Requirements
 
 - PHP 8.3+
+- Composer 2+
+- Node.js 20+ and npm
+- PostgreSQL 
+
+
+## Tech Stack 
+
 - Laravel
-- PostgreSQL
-- composer
+- Blade views/pages
+- Vite asset pipeline
+- TypeScript and CSS build flow (via Vite)
+- Tailwind CSS 4
 
-## Initial Run and Setup
+## Initial Setup (First Run)
 
-Dependencies
+Install PHP dependencies
+
 ```bash
 composer install
+npm install
 ```
 
-Environment setup
+
+Environment Setupt
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Configure database
-```bash
+Configure database in `.env`
+
+```env
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5433
@@ -74,39 +88,34 @@ DB_USERNAME=postgres
 DB_PASSWORD=123
 ```
 
-## Migration
-
+##Migrations
 Run migrations:
-
 ```bash
-php artisan migrate
+php artisan migrate --seed
 ```
 
 Fresh reset:
 
 ```bash
-php artisan migrate:fresh
-```
-
-## Seeding (Required)
-
-- The system relies on seeded survey and rubric data.
-
-```bash
-php artisan db:seed
-```
-
-Full reset + seeded:
-
-```bash
 php artisan migrate:fresh --seed
 ```
 
-## Run Application
+## Run Application 
+
+Use two terminals:
+
+Terminal 1 (Laravel server):
 
 ```bash
 php artisan serve
 ```
+
+Terminal 2 (Vite dev server for TypeScript + CSS):
+
+```bash
+npm run dev
+```
+
 
 ## Notes
 
