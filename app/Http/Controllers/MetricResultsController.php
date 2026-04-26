@@ -63,10 +63,14 @@ class MetricResultsController extends Controller
             }
         }
 
+        $userId = (int) $request->session()->get('user_id', 1);
+        $session = $this->survey->getCurrentTutoringSession($userId);
+
         return view('Surveys.metric_results', [
             'metrics' => $metrics,
             'dimensionScores' => $dimensionScores,
             'compatibilityBreakdown' => $compatibilityBreakdown,
+            'tutoringSession' => $session,
             'ready'   => $ready,
         ]);
     }

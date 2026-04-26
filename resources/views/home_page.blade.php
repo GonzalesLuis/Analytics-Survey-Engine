@@ -1,57 +1,75 @@
 <x-layout title="Home">
-    <h1>Homepage</h1>
+    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Homepage</h1>
 
     @if (session('status_message'))
-        <p>{{ session('status_message') }}</p>
+        <p class="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {{ session('status_message') }}
+        </p>
     @endif
 
     @if ($tutoringSession)
-        <p><strong>Current Session ID:</strong> {{ $tutoringSession->tutoring_session_id }}</p>
-        <p><strong>Status:</strong> {{ ucfirst($tutoringSession->status) }}</p>
-        <p><strong>Session Start:</strong> {{ $tutoringSession->session_start ?? 'N/A' }}</p>
-        <p><strong>Session End:</strong> {{ $tutoringSession->session_end ?? 'N/A' }}</p>
-        <p><strong>Evaluated At:</strong> {{ $tutoringSession->evaluated_at ?? 'N/A' }}</p>
+        <div class="mt-6 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+            <p><span class="font-semibold">Current Session ID:</span> {{ $tutoringSession->tutoring_session_id }}</p>
+            <p><span class="font-semibold">Status:</span> {{ ucfirst($tutoringSession->status) }}</p>
+            <p><span class="font-semibold">Session Start:</span> {{ $tutoringSession->session_start ?? 'N/A' }}</p>
+            <p><span class="font-semibold">Session End:</span> {{ $tutoringSession->session_end ?? 'N/A' }}</p>
+            <p><span class="font-semibold">Evaluated At:</span> {{ $tutoringSession->evaluated_at ?? 'N/A' }}</p>
+        </div>
     @endif
 
-    <h3>{{ $progress['status_text'] }}</h3>
+    <h3 class="mt-6 text-lg font-semibold text-slate-900">{{ $progress['status_text'] }}</h3>
 
-    @if ($progress['can_start'])
-        <form method="POST" action="/session/start" style="margin-bottom: 10px;">
-            @csrf
-            <button type="submit">Start tutoring session</button>
-        </form>
-    @endif
+    <div class="mt-4 flex flex-wrap gap-3">
+        @if ($progress['can_start'])
+            <form method="POST" action="/session/start">
+                @csrf
+                <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+                    Start tutoring session
+                </button>
+            </form>
+        @endif
 
-    @if ($progress['can_end'])
-        <form method="POST" action="/session/end" style="margin-bottom: 10px;">
-            @csrf
-            <button type="submit">End session</button>
-        </form>
-    @endif
+        @if ($progress['can_end'])
+            <form method="POST" action="/session/end">
+                @csrf
+                <button type="submit" class="rounded-md bg-rose-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-rose-500">
+                    End session
+                </button>
+            </form>
+        @endif
 
-    @if ($progress['show_pre'])
-        <form method="GET" action="/pre_session" style="margin-bottom: 10px;">
-            <button type="submit">Pre session survey</button>
-        </form>
-    @endif
+        @if ($progress['show_pre'])
+            <form method="GET" action="/pre_session">
+                <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700">
+                    Pre session survey
+                </button>
+            </form>
+        @endif
 
-    @if ($progress['show_post'])
-        <form method="GET" action="/post_session" style="margin-bottom: 10px;">
-            <button type="submit">Post session survey</button>
-        </form>
-    @endif
+        @if ($progress['show_post'])
+            <form method="GET" action="/post_session">
+                <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700">
+                    Post session survey
+                </button>
+            </form>
+        @endif
 
-    @if ($progress['show_eval'])
-        <form method="GET" action="/tutee_evaluation" style="margin-bottom: 10px;">
-            <button type="submit">Tutee evaluation survey</button>
-        </form>
-    @endif
+        @if ($progress['show_eval'])
+            <form method="GET" action="/tutee_evaluation">
+                <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700">
+                    Tutee evaluation survey
+                </button>
+            </form>
+        @endif
 
-    @if (!empty($canViewSurveyResults))
-        <form method="GET" action="/survey_results" style="margin-bottom: 10px;">
-            <button type="submit">View Survey Results</button>
-        </form>
-    @endif
+        @if (!empty($canViewSurveyResults))
+            <form method="GET" action="/survey_results">
+                <button type="submit" class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500">
+                    View Survey Results
+                </button>
+            </form>
+        @endif
+    </div>
 
     @php
         $debug = $debugResults ?? [];
@@ -60,38 +78,43 @@
         };
     @endphp
     
-    <br>
-    <h2>Survey Results</h3>
+    <h2 class="mt-10 border-t border-slate-200 pt-6 text-xl font-bold text-slate-900">Survey Results</h2>
 
     @if(!empty($debug['pre_session']))
         @php $pre = $debug['pre_session']; @endphp
-        <h3>Pre-session Learning Gain</h3>
-        <p>Prior Understanding: {{ $fmt($pre['prior_understanding'] ?? 0) }}</p>
-        <p>Confidence: {{ $fmt($pre['confidence'] ?? 0) }}</p>
-        <p>Application Readiness: {{ $fmt($pre['application_readiness'] ?? 0) }}</p>
-        <p>Difficulty Awareness: {{ $fmt($pre['difficulty_awareness'] ?? 0) }}</p>
-        <p><strong>Pre-session SRLG Score:</strong> {{ $fmt($pre['average_score'] ?? 0) }}</p><br>
+        <h3 class="mt-6 text-lg font-semibold text-slate-900">Pre-session Learning Gain</h3>
+        <div class="mt-2 space-y-1 text-sm text-slate-700">
+            <p>Prior Understanding: {{ $fmt($pre['prior_understanding'] ?? 0) }}</p>
+            <p>Confidence: {{ $fmt($pre['confidence'] ?? 0) }}</p>
+            <p>Application Readiness: {{ $fmt($pre['application_readiness'] ?? 0) }}</p>
+            <p>Difficulty Awareness: {{ $fmt($pre['difficulty_awareness'] ?? 0) }}</p>
+            <p class="font-semibold text-slate-900">Pre-session SRLG Score: {{ $fmt($pre['average_score'] ?? 0) }}</p>
+        </div>
     @endif
 
     @if(!empty($debug['post_session']))
         @php $post = $debug['post_session']; @endphp
-        <h3>Post-session Learning Gain</h3>
-        <p>Prior Understanding: {{ $fmt($post['prior_understanding'] ?? 0) }}</p>
-        <p>Confidence: {{ $fmt($post['confidence'] ?? 0) }}</p>
-        <p>Application Readiness: {{ $fmt($post['application_readiness'] ?? 0) }}</p>
-        <p>Difficulty Awareness: {{ $fmt($post['difficulty_awareness'] ?? 0) }}</p>
-        <p><strong>Post-session SRLG Score:</strong> {{ $fmt($post['average_score'] ?? 0) }}</p><br>
+        <h3 class="mt-6 text-lg font-semibold text-slate-900">Post-session Learning Gain</h3>
+        <div class="mt-2 space-y-1 text-sm text-slate-700">
+            <p>Prior Understanding: {{ $fmt($post['prior_understanding'] ?? 0) }}</p>
+            <p>Confidence: {{ $fmt($post['confidence'] ?? 0) }}</p>
+            <p>Application Readiness: {{ $fmt($post['application_readiness'] ?? 0) }}</p>
+            <p>Difficulty Awareness: {{ $fmt($post['difficulty_awareness'] ?? 0) }}</p>
+            <p class="font-semibold text-slate-900">Post-session SRLG Score: {{ $fmt($post['average_score'] ?? 0) }}</p>
+        </div>
     @endif
 
     @if(!empty($debug['tutee_evaluation']))
         @php $eval = $debug['tutee_evaluation']; @endphp
-        <h3>Tutee Evaluation</h3>
-        <p>Understanding: {{ $fmt($eval['understanding'] ?? 0) }}</p>
-        <p>Participation: {{ $fmt($eval['participation'] ?? 0) }}</p>
-        <p>Application: {{ $fmt($eval['application'] ?? 0) }}</p>
-        <p>Effort: {{ $fmt($eval['effort'] ?? 0) }}</p>
-        <p>Difficulty Indicators: {{ $fmt($eval['difficulty_indicators'] ?? 0) }}</p>
-        <p><strong>Tutee Evaluation Score:</strong> {{ $fmt($eval['average_score'] ?? 0) }}</p><br>
+        <h3 class="mt-6 text-lg font-semibold text-slate-900">Tutee Evaluation</h3>
+        <div class="mt-2 space-y-1 text-sm text-slate-700">
+            <p>Understanding: {{ $fmt($eval['understanding'] ?? 0) }}</p>
+            <p>Participation: {{ $fmt($eval['participation'] ?? 0) }}</p>
+            <p>Application: {{ $fmt($eval['application'] ?? 0) }}</p>
+            <p>Effort: {{ $fmt($eval['effort'] ?? 0) }}</p>
+            <p>Difficulty Indicators: {{ $fmt($eval['difficulty_indicators'] ?? 0) }}</p>
+            <p class="font-semibold text-slate-900">Tutee Evaluation Score: {{ $fmt($eval['average_score'] ?? 0) }}</p>
+        </div>
     @endif
 
     @if(!empty($debug['tutee_satisfaction']))
