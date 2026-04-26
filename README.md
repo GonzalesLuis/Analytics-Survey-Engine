@@ -88,7 +88,7 @@ DB_USERNAME=postgres
 DB_PASSWORD=123
 ```
 
-##Migrations
+## Migrations
 Run migrations:
 ```bash
 php artisan migrate --seed
